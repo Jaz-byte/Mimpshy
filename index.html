@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Garden Grown for You</title>
+    <title>valentines letter</title>
     <style>
         body {
             margin: 0;
@@ -15,13 +16,14 @@
             height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         canvas {
             position: absolute;
             bottom: 0;
             left: 0;
             filter: contrast(1.1) brightness(1.2);
         }
-        
+
         /* Glass Letter Box Styles */
         #letter-box {
             position: absolute;
@@ -69,7 +71,11 @@
             animation: blink 1s infinite;
         }
 
-        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
 
         #signature {
             display: block;
@@ -104,494 +110,498 @@
 
         /* Mobile adjustments */
         @media (max-width: 600px) {
-            #letter-box { 
+            #letter-box {
                 max-height: 80vh;
                 padding: 25px;
                 max-width: calc(100% - 40px);
             }
+
             #letter-header {
                 font-size: 1.3rem;
             }
+
             #typewriter-text {
                 font-size: 0.95rem;
             }
         }
     </style>
 </head>
+
 <body>
 
-<canvas id="garden"></canvas>
+    <canvas id="garden"></canvas>
 
-<div id="letter-box">
-    <div id="letter-header">Hi Mimpshy,</div>
-    <p id="typewriter-text"></p><span class="cursor" id="cursor"></span>
-    <span id="signature">- Jaziel</span>
-</div>
+    <div id="letter-box">
+        <div id="letter-header">Hi Mimpshy,</div>
+        <p id="typewriter-text"></p><span class="cursor" id="cursor"></span>
+        <span id="signature">- Jaziel</span>
+    </div>
 
-<script>
-    const canvas = document.getElementById('garden');
-    const ctx = canvas.getContext('2d');
-    
-    // DOM Elements
-    const letterBox = document.getElementById('letter-box');
-    const textElement = document.getElementById('typewriter-text');
-    const signature = document.getElementById('signature');
-    const cursor = document.getElementById('cursor');
+    <script>
+        const canvas = document.getElementById('garden');
+        const ctx = canvas.getContext('2d');
 
-    let frame = 0;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+        // DOM Elements
+        const letterBox = document.getElementById('letter-box');
+        const textElement = document.getElementById('typewriter-text');
+        const signature = document.getElementById('signature');
+        const cursor = document.getElementById('cursor');
 
-    const fullLetter = `I first saw you in my cousin's stories and asked for your name noong first year, but Ate Thea said, 'May boyfriend yan,' kaya hinayaan ko na lang. Then noong bakasyon, pumunta ako sa kanila at pinakita niya isa-isa yung video projects niyo sa major subject, kasi sabi niya pamana daw yung gawa nila—hindi daw maganda yung quality compare sa mga pinasa ninyo. Nakita kita doon sa isang vid at sinabi ko, 'Yun yung classmate mong maganda na crush ko,' tapos doon niya sinabi yung pangalan mo. Sabi niya single ka na daw, tapos pabiro ko namang tinanong kung ano social media account mo pero naka-ban daw HAHAHAH. Pero na-stalk ko na yun noong first year pa lang.
+        let frame = 0;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const fullLetter = `I first saw you in my cousin's stories and asked for your name noong first year, but Ate Thea said, 'May boyfriend yan,' kaya hinayaan ko na lang. Then noong bakasyon, pumunta ako sa kanila at pinakita niya isa-isa yung video projects niyo sa major subject, kasi sabi niya pamana daw yung gawa nila—hindi daw maganda yung quality compare sa mga pinasa ninyo. Nakita kita doon sa isang vid at sinabi ko, 'Yun yung classmate mong maganda na crush ko,' tapos doon niya sinabi yung pangalan mo. Sabi niya single ka na daw, tapos pabiro ko namang tinanong kung ano social media account mo pero naka-ban daw HAHAHAH. Pero na-stalk ko na yun noong first year pa lang.
 
 Noong binanggit niya na may TikTok ka, sabi niya i-stalk daw kita tapos binigay niya TikTok mo, then I started following your TikTok account and I always watch your stories. By the way, I like your version of 'Araw Gabi' and the Kaye's bouquet.`;
 
-    let charIndex = 0;
-    let isTypingStarted = false;
+        let charIndex = 0;
+        let isTypingStarted = false;
 
-    function typeWriter() {
-        if (charIndex < fullLetter.length) {
-            textElement.textContent += fullLetter.charAt(charIndex);
-            charIndex++;
-            letterBox.scrollTop = letterBox.scrollHeight;
-            setTimeout(typeWriter, 40); 
-        } else {
-            signature.style.opacity = "1";
-            cursor.style.display = "none";
-        }
-    }
-
-    // Background Stars
-    const stars = Array.from({ length: 200 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height * 0.75,
-        size: Math.random() * 3 + 0.8,
-        blink: Math.random() * 100,
-        twinkleSpeed: 0.02 + Math.random() * 0.03,
-        color: Math.random() > 0.6 ? '#4ecca3' : (Math.random() > 0.4 ? '#ff69b4' : (Math.random() > 0.3 ? '#ffeb3b' : '#ffffff'))
-    }));
-
-    // Grass blades
-    const grassBlades = Array.from({ length: 200 }, () => ({
-        x: Math.random() * canvas.width,
-        height: Math.random() * 80 + 60,
-        width: Math.random() * 3 + 1,
-        sway: Math.random() * Math.PI * 2,
-        swaySpeed: 0.01 + Math.random() * 0.02,
-        color: `hsl(${Math.random() * 40 + 140}, ${Math.random() * 30 + 50}%, ${Math.random() * 20 + 25}%)`
-    }));
-
-    class FloatingHeart {
-        constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * canvas.width;
-            this.y = canvas.height + 20;
-            this.size = Math.random() * 8 + 5;
-            this.speed = Math.random() * 1 + 0.5;
-            this.opacity = Math.random() * 0.5 + 0.3;
-        }
-        draw() {
-            this.y -= this.speed;
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.bezierCurveTo(-this.size, -this.size, -this.size * 2, this.size / 3, 0, this.size);
-            ctx.bezierCurveTo(this.size * 2, this.size / 3, this.size, -this.size, 0, 0);
-            ctx.strokeStyle = `rgba(255, 105, 180, ${this.opacity})`;
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            ctx.restore();
-            if (this.y < -20) this.reset();
-        }
-    }
-
-    class HeartFlower {
-        constructor(x, maxH, size) {
-            this.x = x;
-            this.h = 0;
-            this.maxH = maxH;
-            this.size = size;
-            this.petalSize = 0;
-            this.swaySpeed = 0.02 + Math.random() * 0.01;
-            this.seed = Math.random() * 100;
-            this.glowPhase = Math.random() * 100;
-        }
-
-        draw() {
-            const sway = Math.sin(frame * this.swaySpeed + this.seed) * 8;
-            ctx.beginPath();
-            ctx.moveTo(this.x, canvas.height);
-            ctx.bezierCurveTo(this.x, canvas.height - this.h/2, this.x + sway/2, canvas.height - this.h/2, this.x + sway, canvas.height - this.h);
-            ctx.strokeStyle = '#1a4d2e';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-
-            if (this.h < this.maxH) {
-                this.h += 2;
+        function typeWriter() {
+            if (charIndex < fullLetter.length) {
+                textElement.textContent += fullLetter.charAt(charIndex);
+                charIndex++;
+                letterBox.scrollTop = letterBox.scrollHeight;
+                setTimeout(typeWriter, 40);
             } else {
-                const glowIntensity = 0.6 + Math.sin(frame * 0.03 + this.glowPhase) * 0.3;
-                ctx.save();
-                ctx.translate(this.x + sway, canvas.height - this.h);
-                if (this.petalSize < this.size) this.petalSize += 0.4;
+                signature.style.opacity = "1";
+                cursor.style.display = "none";
+            }
+        }
 
-                ctx.beginPath(); ctx.arc(0, 0, this.petalSize, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(255, 20, 147, ${glowIntensity})`;
+        // Background Stars
+        const stars = Array.from({ length: 200 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height * 0.75,
+            size: Math.random() * 3 + 0.8,
+            blink: Math.random() * 100,
+            twinkleSpeed: 0.02 + Math.random() * 0.03,
+            color: Math.random() > 0.6 ? '#4ecca3' : (Math.random() > 0.4 ? '#ff69b4' : (Math.random() > 0.3 ? '#ffeb3b' : '#ffffff'))
+        }));
+
+        // Grass blades
+        const grassBlades = Array.from({ length: 200 }, () => ({
+            x: Math.random() * canvas.width,
+            height: Math.random() * 80 + 60,
+            width: Math.random() * 3 + 1,
+            sway: Math.random() * Math.PI * 2,
+            swaySpeed: 0.01 + Math.random() * 0.02,
+            color: `hsl(${Math.random() * 40 + 140}, ${Math.random() * 30 + 50}%, ${Math.random() * 20 + 25}%)`
+        }));
+
+        class FloatingHeart {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 20;
+                this.size = Math.random() * 8 + 5;
+                this.speed = Math.random() * 1 + 0.5;
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+            draw() {
+                this.y -= this.speed;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size, -this.size, -this.size * 2, this.size / 3, 0, this.size);
+                ctx.bezierCurveTo(this.size * 2, this.size / 3, this.size, -this.size, 0, 0);
+                ctx.strokeStyle = `rgba(255, 105, 180, ${this.opacity})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.restore();
+                if (this.y < -20) this.reset();
+            }
+        }
+
+        class HeartFlower {
+            constructor(x, maxH, size) {
+                this.x = x;
+                this.h = 0;
+                this.maxH = maxH;
+                this.size = size;
+                this.petalSize = 0;
+                this.swaySpeed = 0.02 + Math.random() * 0.01;
+                this.seed = Math.random() * 100;
+                this.glowPhase = Math.random() * 100;
+            }
+
+            draw() {
+                const sway = Math.sin(frame * this.swaySpeed + this.seed) * 8;
+                ctx.beginPath();
+                ctx.moveTo(this.x, canvas.height);
+                ctx.bezierCurveTo(this.x, canvas.height - this.h / 2, this.x + sway / 2, canvas.height - this.h / 2, this.x + sway, canvas.height - this.h);
+                ctx.strokeStyle = '#1a4d2e';
                 ctx.lineWidth = 3;
                 ctx.stroke();
 
-                this.drawHeart(0, 0, this.petalSize * 0.5);
+                if (this.h < this.maxH) {
+                    this.h += 2;
+                } else {
+                    const glowIntensity = 0.6 + Math.sin(frame * 0.03 + this.glowPhase) * 0.3;
+                    ctx.save();
+                    ctx.translate(this.x + sway, canvas.height - this.h);
+                    if (this.petalSize < this.size) this.petalSize += 0.4;
+
+                    ctx.beginPath(); ctx.arc(0, 0, this.petalSize, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(255, 20, 147, ${glowIntensity})`;
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+
+                    this.drawHeart(0, 0, this.petalSize * 0.5);
+                    ctx.restore();
+                }
+            }
+
+            drawHeart(x, y, size) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.beginPath();
+                ctx.moveTo(0, size * 0.3);
+                ctx.bezierCurveTo(-size * 0.5, -size * 0.3, -size, -size * 0.1, -size, size * 0.3);
+                ctx.bezierCurveTo(-size, size * 0.7, 0, size, 0, size);
+                ctx.bezierCurveTo(0, size, size, size * 0.7, size, size * 0.3);
+                ctx.bezierCurveTo(size, -size * 0.1, size * 0.5, -size * 0.3, 0, size * 0.3);
+                const heartGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, size);
+                heartGrad.addColorStop(0, '#ffb3d9'); heartGrad.addColorStop(1, '#ff1493');
+                ctx.fillStyle = heartGrad; ctx.fill();
                 ctx.restore();
             }
         }
 
-        drawHeart(x, y, size) {
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.beginPath();
-            ctx.moveTo(0, size * 0.3);
-            ctx.bezierCurveTo(-size * 0.5, -size * 0.3, -size, -size * 0.1, -size, size * 0.3);
-            ctx.bezierCurveTo(-size, size * 0.7, 0, size, 0, size);
-            ctx.bezierCurveTo(0, size, size, size * 0.7, size, size * 0.3);
-            ctx.bezierCurveTo(size, -size * 0.1, size * 0.5, -size * 0.3, 0, size * 0.3);
-            const heartGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, size);
-            heartGrad.addColorStop(0, '#ffb3d9'); heartGrad.addColorStop(1, '#ff1493');
-            ctx.fillStyle = heartGrad; ctx.fill();
-            ctx.restore();
-        }
-    }
+        class LotusFlower {
+            constructor(x, maxH) {
+                this.x = x; this.h = 0; this.maxH = maxH;
+                this.petalSize = 0; this.swaySpeed = 0.015 + Math.random() * 0.01;
+                this.seed = Math.random() * 100; this.rotation = 0;
+            }
+            draw() {
+                const sway = Math.sin(frame * this.swaySpeed + this.seed) * 12;
+                ctx.beginPath();
+                ctx.moveTo(this.x, canvas.height);
+                ctx.bezierCurveTo(this.x, canvas.height - this.h / 2, this.x + sway / 2, canvas.height - this.h / 2, this.x + sway, canvas.height - this.h);
+                ctx.strokeStyle = '#1a4d2e'; ctx.lineWidth = 4; ctx.stroke();
 
-    class LotusFlower {
-        constructor(x, maxH) {
-            this.x = x; this.h = 0; this.maxH = maxH;
-            this.petalSize = 0; this.swaySpeed = 0.015 + Math.random() * 0.01;
-            this.seed = Math.random() * 100; this.rotation = 0;
-        }
-        draw() {
-            const sway = Math.sin(frame * this.swaySpeed + this.seed) * 12;
-            ctx.beginPath();
-            ctx.moveTo(this.x, canvas.height);
-            ctx.bezierCurveTo(this.x, canvas.height - this.h/2, this.x + sway/2, canvas.height - this.h/2, this.x + sway, canvas.height - this.h);
-            ctx.strokeStyle = '#1a4d2e'; ctx.lineWidth = 4; ctx.stroke();
-
-            if (this.h < this.maxH) { this.h += 1.8; } 
-            else {
-                ctx.save();
-                ctx.translate(this.x + sway, canvas.height - this.h);
-                if (this.petalSize < 35) this.petalSize += 0.35;
-                this.rotation += 0.003; ctx.rotate(this.rotation);
-                for (let layer = 0; layer < 2; layer++) {
-                    ctx.save(); ctx.rotate((layer * Math.PI) / 5);
-                    for (let i = 0; i < 5; i++) {
-                        ctx.rotate((Math.PI * 2) / 5);
-                        const petalGrad = ctx.createRadialGradient(0, -this.petalSize * 0.8, 0, 0, -this.petalSize * 0.8, this.petalSize);
-                        petalGrad.addColorStop(0, '#ffffff'); petalGrad.addColorStop(1, 'rgba(255, 179, 217, 0.3)');
-                        ctx.beginPath(); ctx.ellipse(0, -this.petalSize * 0.8, this.petalSize * 0.6, this.petalSize, 0, 0, Math.PI * 2);
-                        ctx.fillStyle = petalGrad; ctx.fill();
+                if (this.h < this.maxH) { this.h += 1.8; }
+                else {
+                    ctx.save();
+                    ctx.translate(this.x + sway, canvas.height - this.h);
+                    if (this.petalSize < 35) this.petalSize += 0.35;
+                    this.rotation += 0.003; ctx.rotate(this.rotation);
+                    for (let layer = 0; layer < 2; layer++) {
+                        ctx.save(); ctx.rotate((layer * Math.PI) / 5);
+                        for (let i = 0; i < 5; i++) {
+                            ctx.rotate((Math.PI * 2) / 5);
+                            const petalGrad = ctx.createRadialGradient(0, -this.petalSize * 0.8, 0, 0, -this.petalSize * 0.8, this.petalSize);
+                            petalGrad.addColorStop(0, '#ffffff'); petalGrad.addColorStop(1, 'rgba(255, 179, 217, 0.3)');
+                            ctx.beginPath(); ctx.ellipse(0, -this.petalSize * 0.8, this.petalSize * 0.6, this.petalSize, 0, 0, Math.PI * 2);
+                            ctx.fillStyle = petalGrad; ctx.fill();
+                        }
+                        ctx.restore();
                     }
                     ctx.restore();
                 }
-                ctx.restore();
-            }
-        }
-    }
-
-    class CyanFlower {
-        constructor(x, maxH) {
-            this.x = x;
-            this.h = 0;
-            this.maxH = maxH;
-            this.petalSize = 0;
-            this.swaySpeed = 0.015 + Math.random() * 0.01;
-            this.seed = Math.random() * 100;
-            this.leaves = [];
-            for (let i = 0; i < 3; i++) {
-                this.leaves.push({
-                    yPos: Math.random() * 0.6 + 0.2,
-                    side: Math.random() > 0.5 ? 1 : -1,
-                    size: Math.random() * 20 + 15
-                });
             }
         }
 
-        draw() {
-            const sway = Math.sin(frame * this.swaySpeed + this.seed) * 10;
-            
-            ctx.beginPath();
-            ctx.moveTo(this.x, canvas.height);
-            ctx.bezierCurveTo(
-                this.x, canvas.height - this.h/2, 
-                this.x + sway/2, canvas.height - this.h/2, 
-                this.x + sway, canvas.height - this.h
-            );
-            ctx.strokeStyle = '#2a9d8f';
-            ctx.lineWidth = 5;
-            ctx.lineCap = 'round';
-            ctx.stroke();
-
-            if (this.h < this.maxH) {
-                this.h += 1.5;
-            } else {
-                this.leaves.forEach(leaf => {
-                    const leafY = canvas.height - (this.h * leaf.yPos);
-                    const leafX = this.x + (sway * leaf.yPos);
-                    
-                    ctx.save();
-                    ctx.translate(leafX, leafY);
-                    ctx.beginPath();
-                    ctx.ellipse(leaf.side * 15, 0, leaf.size, leaf.size * 0.5, leaf.side * Math.PI/6, 0, Math.PI * 2);
-                    
-                    const leafGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, leaf.size);
-                    leafGrad.addColorStop(0, '#4ecca3');
-                    leafGrad.addColorStop(0.5, '#2a9d8f');
-                    leafGrad.addColorStop(1, '#1a6b5e');
-                    
-                    ctx.fillStyle = leafGrad;
-                    ctx.fill();
-                    ctx.restore();
-                });
-                
-                ctx.save();
-                ctx.translate(this.x + sway, canvas.height - this.h);
-                
-                if (this.petalSize < 40) this.petalSize += 0.3;
-                
-                for (let i = 0; i < 5; i++) {
-                    ctx.save();
-                    ctx.rotate((Math.PI * 2 / 5) * i);
-                    
-                    const petalGrad = ctx.createRadialGradient(0, -this.petalSize * 0.7, 0, 0, -this.petalSize * 0.7, this.petalSize * 0.8);
-                    petalGrad.addColorStop(0, '#e0f7fa');
-                    petalGrad.addColorStop(0.3, '#80deea');
-                    petalGrad.addColorStop(0.7, '#4dd0e1');
-                    petalGrad.addColorStop(1, '#26c6da');
-                    
-                    ctx.beginPath();
-                    ctx.ellipse(0, -this.petalSize * 0.7, this.petalSize * 0.5, this.petalSize * 0.65, 0, 0, Math.PI * 2);
-                    ctx.fillStyle = petalGrad;
-                    ctx.fill();
-                    
-                    ctx.restore();
+        class CyanFlower {
+            constructor(x, maxH) {
+                this.x = x;
+                this.h = 0;
+                this.maxH = maxH;
+                this.petalSize = 0;
+                this.swaySpeed = 0.015 + Math.random() * 0.01;
+                this.seed = Math.random() * 100;
+                this.leaves = [];
+                for (let i = 0; i < 3; i++) {
+                    this.leaves.push({
+                        yPos: Math.random() * 0.6 + 0.2,
+                        side: Math.random() > 0.5 ? 1 : -1,
+                        size: Math.random() * 20 + 15
+                    });
                 }
-                
-                const centerGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 12);
-                centerGrad.addColorStop(0, '#fff9c4');
-                centerGrad.addColorStop(0.4, '#ffeb3b');
-                centerGrad.addColorStop(0.7, '#ffc107');
-                centerGrad.addColorStop(1, '#ff9800');
-                
+            }
+
+            draw() {
+                const sway = Math.sin(frame * this.swaySpeed + this.seed) * 10;
+
                 ctx.beginPath();
-                ctx.arc(0, 0, 12, 0, Math.PI * 2);
-                ctx.fillStyle = centerGrad;
-                ctx.fill();
-                
-                for (let i = 0; i < 6; i++) {
-                    const angle = (Math.PI * 2 / 6) * i;
-                    const dotX = Math.cos(angle) * 6;
-                    const dotY = Math.sin(angle) * 6;
-                    
-                    ctx.beginPath();
-                    ctx.arc(dotX, dotY, 2, 0, Math.PI * 2);
-                    ctx.fillStyle = '#ff6f00';
-                    ctx.fill();
-                }
-                
-                ctx.restore();
-            }
-        }
-    }
+                ctx.moveTo(this.x, canvas.height);
+                ctx.bezierCurveTo(
+                    this.x, canvas.height - this.h / 2,
+                    this.x + sway / 2, canvas.height - this.h / 2,
+                    this.x + sway, canvas.height - this.h
+                );
+                ctx.strokeStyle = '#2a9d8f';
+                ctx.lineWidth = 5;
+                ctx.lineCap = 'round';
+                ctx.stroke();
 
-    class TulipFlower {
-        constructor(x, maxH, color) {
-            this.x = x;
-            this.h = 0;
-            this.maxH = maxH;
-            this.color = color;
-            this.petalSize = 0;
-            this.swaySpeed = 0.018 + Math.random() * 0.01;
-            this.seed = Math.random() * 100;
-        }
+                if (this.h < this.maxH) {
+                    this.h += 1.5;
+                } else {
+                    this.leaves.forEach(leaf => {
+                        const leafY = canvas.height - (this.h * leaf.yPos);
+                        const leafX = this.x + (sway * leaf.yPos);
 
-        draw() {
-            const sway = Math.sin(frame * this.swaySpeed + this.seed) * 9;
-            
-            ctx.beginPath();
-            ctx.moveTo(this.x, canvas.height);
-            ctx.bezierCurveTo(
-                this.x, canvas.height - this.h/2, 
-                this.x + sway/2, canvas.height - this.h/2, 
-                this.x + sway, canvas.height - this.h
-            );
-            ctx.strokeStyle = '#1a4d2e';
-            ctx.lineWidth = 4;
-            ctx.lineCap = 'round';
-            ctx.stroke();
+                        ctx.save();
+                        ctx.translate(leafX, leafY);
+                        ctx.beginPath();
+                        ctx.ellipse(leaf.side * 15, 0, leaf.size, leaf.size * 0.5, leaf.side * Math.PI / 6, 0, Math.PI * 2);
 
-            if (this.h < this.maxH) {
-                this.h += 1.7;
-            } else {
-                ctx.save();
-                ctx.translate(this.x + sway, canvas.height - this.h);
-                
-                if (this.petalSize < 30) this.petalSize += 0.35;
-                
-                for (let i = 0; i < 6; i++) {
+                        const leafGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, leaf.size);
+                        leafGrad.addColorStop(0, '#4ecca3');
+                        leafGrad.addColorStop(0.5, '#2a9d8f');
+                        leafGrad.addColorStop(1, '#1a6b5e');
+
+                        ctx.fillStyle = leafGrad;
+                        ctx.fill();
+                        ctx.restore();
+                    });
+
                     ctx.save();
-                    ctx.rotate((Math.PI * 2 / 6) * i);
-                    
-                    const petalGrad = ctx.createLinearGradient(0, -this.petalSize, 0, 0);
-                    petalGrad.addColorStop(0, this.color);
-                    petalGrad.addColorStop(0.5, this.lightenColor(this.color, 20));
-                    petalGrad.addColorStop(1, this.darkenColor(this.color, 20));
-                    
+                    ctx.translate(this.x + sway, canvas.height - this.h);
+
+                    if (this.petalSize < 40) this.petalSize += 0.3;
+
+                    for (let i = 0; i < 5; i++) {
+                        ctx.save();
+                        ctx.rotate((Math.PI * 2 / 5) * i);
+
+                        const petalGrad = ctx.createRadialGradient(0, -this.petalSize * 0.7, 0, 0, -this.petalSize * 0.7, this.petalSize * 0.8);
+                        petalGrad.addColorStop(0, '#e0f7fa');
+                        petalGrad.addColorStop(0.3, '#80deea');
+                        petalGrad.addColorStop(0.7, '#4dd0e1');
+                        petalGrad.addColorStop(1, '#26c6da');
+
+                        ctx.beginPath();
+                        ctx.ellipse(0, -this.petalSize * 0.7, this.petalSize * 0.5, this.petalSize * 0.65, 0, 0, Math.PI * 2);
+                        ctx.fillStyle = petalGrad;
+                        ctx.fill();
+
+                        ctx.restore();
+                    }
+
+                    const centerGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 12);
+                    centerGrad.addColorStop(0, '#fff9c4');
+                    centerGrad.addColorStop(0.4, '#ffeb3b');
+                    centerGrad.addColorStop(0.7, '#ffc107');
+                    centerGrad.addColorStop(1, '#ff9800');
+
                     ctx.beginPath();
-                    ctx.moveTo(0, 0);
-                    ctx.bezierCurveTo(
-                        -this.petalSize * 0.3, -this.petalSize * 0.5,
-                        -this.petalSize * 0.3, -this.petalSize,
-                        0, -this.petalSize * 1.2
-                    );
-                    ctx.bezierCurveTo(
-                        this.petalSize * 0.3, -this.petalSize,
-                        this.petalSize * 0.3, -this.petalSize * 0.5,
-                        0, 0
-                    );
-                    
-                    ctx.fillStyle = petalGrad;
+                    ctx.arc(0, 0, 12, 0, Math.PI * 2);
+                    ctx.fillStyle = centerGrad;
                     ctx.fill();
-                    
-                    ctx.strokeStyle = this.lightenColor(this.color, 40);
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-                    
+
+                    for (let i = 0; i < 6; i++) {
+                        const angle = (Math.PI * 2 / 6) * i;
+                        const dotX = Math.cos(angle) * 6;
+                        const dotY = Math.sin(angle) * 6;
+
+                        ctx.beginPath();
+                        ctx.arc(dotX, dotY, 2, 0, Math.PI * 2);
+                        ctx.fillStyle = '#ff6f00';
+                        ctx.fill();
+                    }
+
                     ctx.restore();
                 }
-                
-                ctx.restore();
             }
         }
 
-        lightenColor(color, percent) {
-            const num = parseInt(color.replace("#",""), 16);
-            const amt = Math.round(2.55 * percent);
-            const R = Math.min(255, (num >> 16) + amt);
-            const G = Math.min(255, (num >> 8 & 0x00FF) + amt);
-            const B = Math.min(255, (num & 0x0000FF) + amt);
-            return "#" + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+        class TulipFlower {
+            constructor(x, maxH, color) {
+                this.x = x;
+                this.h = 0;
+                this.maxH = maxH;
+                this.color = color;
+                this.petalSize = 0;
+                this.swaySpeed = 0.018 + Math.random() * 0.01;
+                this.seed = Math.random() * 100;
+            }
+
+            draw() {
+                const sway = Math.sin(frame * this.swaySpeed + this.seed) * 9;
+
+                ctx.beginPath();
+                ctx.moveTo(this.x, canvas.height);
+                ctx.bezierCurveTo(
+                    this.x, canvas.height - this.h / 2,
+                    this.x + sway / 2, canvas.height - this.h / 2,
+                    this.x + sway, canvas.height - this.h
+                );
+                ctx.strokeStyle = '#1a4d2e';
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+
+                if (this.h < this.maxH) {
+                    this.h += 1.7;
+                } else {
+                    ctx.save();
+                    ctx.translate(this.x + sway, canvas.height - this.h);
+
+                    if (this.petalSize < 30) this.petalSize += 0.35;
+
+                    for (let i = 0; i < 6; i++) {
+                        ctx.save();
+                        ctx.rotate((Math.PI * 2 / 6) * i);
+
+                        const petalGrad = ctx.createLinearGradient(0, -this.petalSize, 0, 0);
+                        petalGrad.addColorStop(0, this.color);
+                        petalGrad.addColorStop(0.5, this.lightenColor(this.color, 20));
+                        petalGrad.addColorStop(1, this.darkenColor(this.color, 20));
+
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.bezierCurveTo(
+                            -this.petalSize * 0.3, -this.petalSize * 0.5,
+                            -this.petalSize * 0.3, -this.petalSize,
+                            0, -this.petalSize * 1.2
+                        );
+                        ctx.bezierCurveTo(
+                            this.petalSize * 0.3, -this.petalSize,
+                            this.petalSize * 0.3, -this.petalSize * 0.5,
+                            0, 0
+                        );
+
+                        ctx.fillStyle = petalGrad;
+                        ctx.fill();
+
+                        ctx.strokeStyle = this.lightenColor(this.color, 40);
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+
+                        ctx.restore();
+                    }
+
+                    ctx.restore();
+                }
+            }
+
+            lightenColor(color, percent) {
+                const num = parseInt(color.replace("#", ""), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = Math.min(255, (num >> 16) + amt);
+                const G = Math.min(255, (num >> 8 & 0x00FF) + amt);
+                const B = Math.min(255, (num & 0x0000FF) + amt);
+                return "#" + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+            }
+
+            darkenColor(color, percent) {
+                const num = parseInt(color.replace("#", ""), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = Math.max(0, (num >> 16) - amt);
+                const G = Math.max(0, (num >> 8 & 0x00FF) - amt);
+                const B = Math.max(0, (num & 0x0000FF) - amt);
+                return "#" + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+            }
         }
 
-        darkenColor(color, percent) {
-            const num = parseInt(color.replace("#",""), 16);
-            const amt = Math.round(2.55 * percent);
-            const R = Math.max(0, (num >> 16) - amt);
-            const G = Math.max(0, (num >> 8 & 0x00FF) - amt);
-            const B = Math.max(0, (num & 0x0000FF) - amt);
-            return "#" + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+        const floatingHearts = Array.from({ length: 8 }, () => new FloatingHeart());
+
+        // Full lush garden with many flowers
+        const flowers = [
+            new TulipFlower(canvas.width * 0.05, 180, '#9c27b0'),
+            new HeartFlower(canvas.width * 0.08, 160, 22),
+            new TulipFlower(canvas.width * 0.14, 195, '#e91e63'),
+            new HeartFlower(canvas.width * 0.17, 180, 25),
+            new CyanFlower(canvas.width * 0.20, 250),
+            new LotusFlower(canvas.width * 0.23, 220),
+            new TulipFlower(canvas.width * 0.26, 200, '#9c27b0'),
+            new HeartFlower(canvas.width * 0.29, 170, 23),
+            new CyanFlower(canvas.width * 0.32, 270),
+            new CyanFlower(canvas.width * 0.38, 285),
+            new HeartFlower(canvas.width * 0.41, 165, 21),
+            new TulipFlower(canvas.width * 0.44, 210, '#e91e63'),
+            new CyanFlower(canvas.width * 0.47, 300),
+            new CyanFlower(canvas.width * 0.49, 310),
+            new LotusFlower(canvas.width * 0.50, 280),
+            new CyanFlower(canvas.width * 0.51, 305),
+            new CyanFlower(canvas.width * 0.53, 295),
+            new CyanFlower(canvas.width * 0.56, 285),
+            new TulipFlower(canvas.width * 0.58, 215, '#9c27b0'),
+            new HeartFlower(canvas.width * 0.61, 175, 24),
+            new CyanFlower(canvas.width * 0.64, 275),
+            new CyanFlower(canvas.width * 0.70, 265),
+            new HeartFlower(canvas.width * 0.73, 160, 20),
+            new TulipFlower(canvas.width * 0.76, 205, '#e91e63'),
+            new CyanFlower(canvas.width * 0.79, 260),
+            new LotusFlower(canvas.width * 0.82, 230),
+            new HeartFlower(canvas.width * 0.85, 170, 22),
+            new TulipFlower(canvas.width * 0.88, 195, '#9c27b0'),
+            new HeartFlower(canvas.width * 0.94, 155, 21),
+            new TulipFlower(canvas.width * 0.97, 185, '#e91e63'),
+        ];
+
+        function animate() {
+            ctx.fillStyle = 'rgba(10, 10, 30, 0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            frame++;
+
+            stars.forEach(s => {
+                const twinkle = Math.abs(Math.sin(frame * (s.twinkleSpeed || 0.02) + s.blink));
+                const starSize = s.size * (0.6 + twinkle * 0.4);
+
+                ctx.save();
+                ctx.globalAlpha = 0.5 + twinkle * 0.5;
+
+                const starGlow = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, starSize * 2);
+                starGlow.addColorStop(0, s.color);
+                starGlow.addColorStop(0.5, s.color + '40');
+                starGlow.addColorStop(1, 'transparent');
+
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, starSize * 2, 0, Math.PI * 2);
+                ctx.fillStyle = starGlow;
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, starSize, 0, Math.PI * 2);
+                ctx.fillStyle = s.color;
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = s.color;
+                ctx.fill();
+
+                ctx.restore();
+            });
+            ctx.globalAlpha = 1;
+
+            grassBlades.forEach(blade => {
+                const swayOffset = Math.sin(frame * blade.swaySpeed + blade.sway) * 8;
+                ctx.beginPath();
+                ctx.moveTo(blade.x, canvas.height);
+                ctx.quadraticCurveTo(
+                    blade.x + swayOffset,
+                    canvas.height - blade.height / 2,
+                    blade.x + swayOffset * 1.5,
+                    canvas.height - blade.height
+                );
+                ctx.strokeStyle = blade.color;
+                ctx.lineWidth = blade.width;
+                ctx.stroke();
+            });
+
+            floatingHearts.forEach(h => h.draw());
+            flowers.forEach(f => f.draw());
+
+            if (frame > 250 && !isTypingStarted) {
+                letterBox.style.opacity = "1";
+                isTypingStarted = true;
+                setTimeout(typeWriter, 1000);
+            }
+
+            requestAnimationFrame(animate);
         }
-    }
 
-    const floatingHearts = Array.from({ length: 8 }, () => new FloatingHeart());
-    
-    // Full lush garden with many flowers
-    const flowers = [
-        new TulipFlower(canvas.width * 0.05, 180, '#9c27b0'),
-        new HeartFlower(canvas.width * 0.08, 160, 22),
-        new TulipFlower(canvas.width * 0.14, 195, '#e91e63'),
-        new HeartFlower(canvas.width * 0.17, 180, 25),
-        new CyanFlower(canvas.width * 0.20, 250),
-        new LotusFlower(canvas.width * 0.23, 220),
-        new TulipFlower(canvas.width * 0.26, 200, '#9c27b0'),
-        new HeartFlower(canvas.width * 0.29, 170, 23),
-        new CyanFlower(canvas.width * 0.32, 270),
-        new CyanFlower(canvas.width * 0.38, 285),
-        new HeartFlower(canvas.width * 0.41, 165, 21),
-        new TulipFlower(canvas.width * 0.44, 210, '#e91e63'),
-        new CyanFlower(canvas.width * 0.47, 300),
-        new CyanFlower(canvas.width * 0.49, 310),
-        new LotusFlower(canvas.width * 0.50, 280),
-        new CyanFlower(canvas.width * 0.51, 305),
-        new CyanFlower(canvas.width * 0.53, 295),
-        new CyanFlower(canvas.width * 0.56, 285),
-        new TulipFlower(canvas.width * 0.58, 215, '#9c27b0'),
-        new HeartFlower(canvas.width * 0.61, 175, 24),
-        new CyanFlower(canvas.width * 0.64, 275),
-        new CyanFlower(canvas.width * 0.70, 265),
-        new HeartFlower(canvas.width * 0.73, 160, 20),
-        new TulipFlower(canvas.width * 0.76, 205, '#e91e63'),
-        new CyanFlower(canvas.width * 0.79, 260),
-        new LotusFlower(canvas.width * 0.82, 230),
-        new HeartFlower(canvas.width * 0.85, 170, 22),
-        new TulipFlower(canvas.width * 0.88, 195, '#9c27b0'),
-        new HeartFlower(canvas.width * 0.94, 155, 21),
-        new TulipFlower(canvas.width * 0.97, 185, '#e91e63'),
-    ];
+        animate();
 
-    function animate() {
-        ctx.fillStyle = 'rgba(10, 10, 30, 0.3)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        frame++;
-
-        stars.forEach(s => {
-            const twinkle = Math.abs(Math.sin(frame * (s.twinkleSpeed || 0.02) + s.blink));
-            const starSize = s.size * (0.6 + twinkle * 0.4);
-            
-            ctx.save();
-            ctx.globalAlpha = 0.5 + twinkle * 0.5;
-            
-            const starGlow = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, starSize * 2);
-            starGlow.addColorStop(0, s.color);
-            starGlow.addColorStop(0.5, s.color + '40');
-            starGlow.addColorStop(1, 'transparent');
-            
-            ctx.beginPath();
-            ctx.arc(s.x, s.y, starSize * 2, 0, Math.PI * 2);
-            ctx.fillStyle = starGlow;
-            ctx.fill();
-            
-            ctx.beginPath(); 
-            ctx.arc(s.x, s.y, starSize, 0, Math.PI * 2);
-            ctx.fillStyle = s.color; 
-            ctx.shadowBlur = 4;
-            ctx.shadowColor = s.color;
-            ctx.fill();
-            
-            ctx.restore();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         });
-        ctx.globalAlpha = 1;
-
-        grassBlades.forEach(blade => {
-            const swayOffset = Math.sin(frame * blade.swaySpeed + blade.sway) * 8;
-            ctx.beginPath(); 
-            ctx.moveTo(blade.x, canvas.height);
-            ctx.quadraticCurveTo(
-                blade.x + swayOffset, 
-                canvas.height - blade.height / 2, 
-                blade.x + swayOffset * 1.5, 
-                canvas.height - blade.height
-            );
-            ctx.strokeStyle = blade.color; 
-            ctx.lineWidth = blade.width; 
-            ctx.stroke();
-        });
-
-        floatingHearts.forEach(h => h.draw());
-        flowers.forEach(f => f.draw());
-
-        if (frame > 250 && !isTypingStarted) {
-            letterBox.style.opacity = "1";
-            isTypingStarted = true;
-            setTimeout(typeWriter, 1000);
-        }
-
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-    
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-</script>
+    </script>
 </body>
+
 </html>
